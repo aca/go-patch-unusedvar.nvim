@@ -36,3 +36,5 @@ end
 vim.api.nvim_create_user_command("GoPatchUnusedVar", function()
     patch()
 end, {})
+
+return patch
