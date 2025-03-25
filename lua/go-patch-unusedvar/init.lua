@@ -11,6 +11,11 @@ local patch = function()
 				lang = "go",
 			})
 
+			-- vim.print(cur_node)
+			-- vim.print(cur_node:type())
+			-- vim.print(cur_node:parent():type())
+			-- vim.print(cur_node:parent():parent():type())
+
 			if cur_node == nil then
 				return 1
 			end
@@ -22,9 +27,19 @@ local patch = function()
 			if block == nil then
 				return 1
 			end
-			local _, start_col = block:start()
-			local end_row = block:end_()
-			patchtable[count] = { end_row + 1, string.rep("\t", start_col) .. "_ = " .. var_name }
+
+			if block:type() == "range_clause" then
+                print("this is range")
+                block = block
+				-- local _, start_col = block:start()
+				local _, start_col = block:parent():start()
+				local end_row = block:end_()
+				patchtable[count] = { end_row + 1, string.rep("\t", start_col + 1) .. "_ = " .. var_name }
+			else
+				local _, start_col = block:start()
+				local end_row = block:end_()
+				patchtable[count] = { end_row + 1, string.rep("\t", start_col) .. "_ = " .. var_name }
+			end
 		end
 	end
 
